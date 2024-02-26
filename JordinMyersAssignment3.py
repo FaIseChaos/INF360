@@ -8,7 +8,7 @@
 # [x] (5/5 points) Write a function that will go through the newly created dictionary and return a list of all the car's names, sorted alphabetically.
 # [x] (5/5 points) Write a function that will go through the newly created dictionary return a dictionary of all the cars names and year introduced.
 # [x] (5/5 points) Use a print statement to show the results of the function from step 3, each on their own line.
-# (5/5 points) Use a print statement to show the results of the function from step 4 to display in the format: year : name. Sort by year introduced.
+# [x] (5/5 points) Use a print statement to show the results of the function from step 4 to display in the format: year : name. Sort by year introduced.
 
 Ka = {
     "Name": "Ka",
@@ -99,7 +99,6 @@ def carNames(t):
 
 def carNamesAndYears(t):
     carDictionary = {}
-    yearIntroduced = {}
     for i in t:
         carDictionary[i["Name"]] = i["Year Introduced"]
     return carDictionary
