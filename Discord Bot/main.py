@@ -5,9 +5,10 @@ Main Objectives:
  - use discord to stream/record meetings & set up events
  - general form creation, submission, data storage (?), and retrieval
     - for signups, surveys, etc.
+    - if it's a document that needs filled out, like emergency info or waiver, have google forms make google doc automatically
  - simple polls
  - attendance tracking for LLC members & Oktoberfest volunteers
-  - resource repository
+ - resource repository
     - allow members to access club resources (such as documents, links, or guides)
  - info on club officers, members, and alumni
     - linkedin profiles
@@ -23,8 +24,8 @@ Future Objectives:
 
 from typing import Final
 import os
-from dotenv import load_dotenv
-from discord import Intents, Client, Message
+from dotenv import load_dotenv #pip install pyton-dotenv
+from discord import Intents, Client, Message #pip install discord
 from responces import get_response
 
 # load bot token
