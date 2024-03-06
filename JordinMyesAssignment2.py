@@ -10,7 +10,7 @@
 # [x] (2 points) - Write at least 1 for loop using the range() method.
 # [x] (1 point) - Use the import keyword to import the random module. Use the random.randint() function somewhere in your script.
 
-import time, fontstyle, sys, random
+import time, fontstyle, sys, random #pip install fontstyle
 
 intro = fontstyle.apply("Moony, Wormtail, Padfoot, and Prongs are proud to present the Marauder's Map!",'bold/underline')
 print(intro)

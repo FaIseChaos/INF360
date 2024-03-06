@@ -24,7 +24,7 @@ Future Objectives:
 
 from typing import Final
 import os
-from dotenv import load_dotenv #pip install pyton-dotenv
+from dotenv import load_dotenv #pip install python-dotenv
 from discord import Intents, Client, Message #pip install discord
 from responces import get_response
 
