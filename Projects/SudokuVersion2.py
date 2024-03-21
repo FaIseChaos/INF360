@@ -1,4 +1,5 @@
 # Sudoku solver 
+# algorithm based on this wikipedia article https://en.wikipedia.org/wiki/Sudoku_solving_algorithms#/media/File:Sudoku_solved_by_bactracking.gif
 # 1. function that checks if row is valid
 # 2. function that checks if column is valid
 # 3. function that checks if box is valid
@@ -10,6 +11,11 @@ import os
 
 #set up board data
 r = {
+    i: ["."]*9 
+    for i in range(9)
+}
+
+""""r = { old dictionary
     0: ["X",".",".",".",".",".",".",".","."],
     1: [".",".",".",".",".",".",".",".","."],
     2: [".",".",".",".",".",".",".",".","."],
@@ -19,9 +25,14 @@ r = {
     6: [".",".",".",".",".",".",".",".","."],
     7: [".",".",".",".",".",".",".",".","."],
     8: [".",".",".",".",".",".",".",".","."]
+}"""
+
+c = { # zip function, will do one "round" of the the "j" for loop first, then one "round" of the "i" for loop, then back to "j", then "i", etc.
+    i: [r[j][i] for j in range(9)] 
+    for i in range(9)
 }
 
-c = {
+"""c = { old dictionary
     0: [r[0][0],r[1][0],r[2][0],r[3][0],r[4][0],r[5][0],r[6][0],r[7][0],r[8][0]],
     1: [r[0][1],r[1][1],r[2][1],r[3][1],r[4][1],r[5][1],r[6][1],r[7][1],r[8][1]],
     2: [r[0][2],r[1][2],r[2][2],r[3][2],r[4][2],r[5][2],r[6][2],r[7][2],r[8][2]],
@@ -31,7 +42,7 @@ c = {
     6: [r[0][6],r[1][6],r[2][6],r[3][6],r[4][6],r[5][6],r[6][6],r[7][6],r[8][6]],
     7: [r[0][7],r[1][7],r[2][7],r[3][7],r[4][7],r[5][7],r[6][7],r[7][7],r[8][7]],
     8: [r[0][8],r[1][8],r[2][8],r[3][8],r[4][8],r[5][8],r[6][8],r[7][8],r[8][8]]
-}
+}"""
 
 b = {
     0: [r[0][0],r[0][1],r[0][2],r[1][0],r[1][1],r[1][2],r[2][0],r[2][1],r[2][2]],
@@ -44,6 +55,12 @@ b = {
     7: [r[6][3],r[6][4],r[6][5],r[7][3],r[7][4],r[7][5],r[8][3],r[8][4],r[8][5]],
     8: [r[6][6],r[6][7],r[6][8],r[7][6],r[7][7],r[7][8],r[8][6],r[8][7],r[8][8]]
 }
+
+"""
+b = { new dictionary I do not understand
+    i: [r[row][col] for row in range(i//3*3, i//3*3+3) for col in range(i%3*3, i%3*3+3)] for i in range(9)
+}
+"""
 
 n = ['1','2','3','4','5','6','7','8','9']
 
@@ -108,7 +125,7 @@ def up():
     if pos[0] > 0:
         pos[0] -= 1
     loc(pos[0],pos[1])
-    print(board())
+    print(message,board())
 
 def down():
     clean(pos[0],pos[1])
@@ -137,9 +154,19 @@ def check(row,digit,f):
         return False
 
 def solve():
+    for i in range(9):
+        for j in range(9):
+            if r[i][j] == ".":
+                for n in range(1,10):
+                    if check(i,n,'row') and check(i,n,'col') and check(i,n,'box'):
+                        r[i][j] = n
+                        solve()
+                        r[i][j] = "."
+                return
     return
 
 #main loop
+r[0][0] = 'X'
 print(message,board())
 def on_key_release(key):
     if key == Key.right:
