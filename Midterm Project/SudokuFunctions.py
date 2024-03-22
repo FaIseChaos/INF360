@@ -1,9 +1,3 @@
-# Sudoku solver by Jordin Myers
-# solving steps are based on this wikipedia article https://en.wikipedia.org/wiki/Sudoku_solving_algorithms#/media/File:Sudoku_solved_by_bactracking.gif
-
-from time import sleep as sleep
-from pynput import keyboard # pip install pynput
-from pynput.keyboard import Key
 from datetime import datetime
 import os
 
@@ -12,12 +6,11 @@ boardData = { # creates a 9x9 board with all values set to "." - backend use
     i: ["."]*9 for i in range(9)
 }
 pos = [0,0] # starting position
-solved = False # used to check if the board is solved
 message = """ 
 Use the arrow keys to move the cursor and the number keys to enter a number.
 Press esc to exit.
 Press enter to submit.
-""" # instructions
+"""
 
 #functions
 def create_board(): # creates the board that will be displayed to user
@@ -77,6 +70,24 @@ def move_down(): # moves the cursor down
     boardData[pos[0]][pos[1]] = "X"
     print(message,create_board())
 
+def input_number(num):
+    if num > 0:
+        boardData[pos[0]][pos[1]] = num
+        move_right()
+
+def enter_pressed():
+    print("Solving...")
+    for i in range(9): # removes the cursor from the board
+        for j in range(9):
+            if boardData[i][j] == "X":
+                boardData[i][j] = "."
+    solve_puzzle(0,0)
+    os.system('cls')
+    if check_solution() == True:
+        print("Solved!",create_board())
+    else:
+        print("No solution found.",create_board())
+
 def check_if_valid(row, col, num): # logic to check if the number is valid
     for i in range(9): #checking the row
         if boardData[row][i] == num:
@@ -119,53 +130,5 @@ def check_solution():
             logic = False
     return logic
 
-#main loop
-boardData[pos[0]][pos[0]] = "X" # sets the starting position
-print(message,create_board())
-def on_key_release(key): # listens for key presses
-    global solved
-    if key == Key.right: 
-        if solved == False:
-            move_right()
-    elif key == Key.left:
-        if solved == False:
-            move_left()
-    elif key == Key.up:
-        if solved == False:
-            move_up()
-    elif key == Key.down:
-        if solved == False:
-            move_down()
-    elif key == Key.esc:
-        print("Exiting...")
-        sleep(1)
-        exit()
-    elif key == Key.enter:
-        print("Solving...")
-        for i in range(9): # removes the cursor from the board
-            for j in range(9):
-                if boardData[i][j] == "X":
-                    boardData[i][j] = "."
-        solved = True
-        solve_puzzle(0,0)
-        os.system('cls')
-        if check_solution() == True:
-            print("Solved!",create_board())
-        else:
-            print("No solution found.",create_board())
-    else: # checks if the input is a number and if it is, it is entered into the board
-        try: # using try except to catch invalid inputs (if key is pressed that is not number/letter it would crash the program otherwise)
-            num = int(key.char)
-            if num > 0:
-                boardData[pos[0]][pos[1]] = num
-                move_right()
-        except:
-            print("Invalid input.")
-    
-try: # used to catch errors
-    with keyboard.Listener(on_release=on_key_release) as listener:
-        listener.join()
-except:
-    print("An error occured.")
-    sleep(5)
-    exit()
+boardData[pos[0]][pos[1]] = "X" # sets the starting position
+print(message,create_board()) # prints the board and instructions
