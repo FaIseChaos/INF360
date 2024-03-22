@@ -4,6 +4,7 @@
 from time import sleep as sleep
 from pynput import keyboard # pip install pynput
 from pynput.keyboard import Key
+from datetime import datetime
 import os
 
 #set up board
@@ -93,6 +94,7 @@ def check(row, col, num): # logic to check if the number is valid
     return True 
  
 def solve(row, col):
+    startTime = datetime.now()
     if (row == 8 and col == 9):# if the solving function gets to this point, the board is solved and function is aborted, rerturns True
         return True
     if col == 9: # goes to the next row
@@ -106,6 +108,9 @@ def solve(row, col):
             if solve(row, col + 1): # recursively calls the function
                 return True
         r[row][col] = "." # if the number is not valid, it is reset
+        deltaTime = datetime.now() - startTime
+        if deltaTime.total_seconds() > 5: # if the function takes longer than 5 seconds, it is aborted
+            break
     return False 
 
 def solution():
@@ -138,7 +143,6 @@ def on_key_release(key): # listens for key presses
         exit()
     elif key == Key.enter:
         print("Solving...")
-        print(str(solve(0,0)))
         for i in range(9): # removes the cursor from the board
             for j in range(9):
                 if r[i][j] == "X":
