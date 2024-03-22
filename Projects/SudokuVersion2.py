@@ -1,38 +1,26 @@
-# Sudoku solver 
-# algorithm based on this wikipedia article https://en.wikipedia.org/wiki/Sudoku_solving_algorithms#/media/File:Sudoku_solved_by_bactracking.gif
-# 1. function that checks if row is valid
-# 2. function that checks if column is valid
-# 3. function that checks if box is valid
+# Sudoku solver by Jordin Myers
+# solving steps are based on this wikipedia article https://en.wikipedia.org/wiki/Sudoku_solving_algorithms#/media/File:Sudoku_solved_by_bactracking.gif
 
 from time import sleep as sleep
 from pynput import keyboard # pip install pynput
 from pynput.keyboard import Key
 import os
-import fontstyle # pip install fontstyle
 
-#set up board data
-r = {
-    i: ["."]*9 
-    for i in range(9)
+#set up board
+r = { # creates a 9x9 board with all values set to "." - backend use
+    i: ["."]*9 for i in range(9)
 }
-
-c = { # zip function, will do one "round" of the the "j" for loop first, then one "round" of the "i" for loop, then back to "j", then "i", etc.
-    i: [r[j][i] for j in range(9)] 
-    for i in range(9)
-}
-
-n = ['1','2','3','4','5','6','7','8','9']
-
-pos = [0,0]
-
-message = """
+n = ['1','2','3','4','5','6','7','8','9'] # used to check if the input is a number
+pos = [0,0] # starting position
+s = False # used to check if the board is solved
+message = """ 
 Use the arrow keys to move the cursor and the number keys to enter a number.
 Press esc to exit.
 Press enter to submit.
-"""
+""" # instructions
 
 #functions
-def board():
+def board(): # creates the board that will be displayed to user
     b = f"""
         -------------------------
         | {r[0][0]} {r[0][1]} {r[0][2]} | {r[0][3]} {r[0][4]} {r[0][5]} | {r[0][6]} {r[0][7]} {r[0][8]} |
@@ -50,107 +38,133 @@ def board():
         """
     return b
 
-def clean(row,col):
+def clean(row,col): # used to clean the terminal
     os.system('cls')
-    #r[row][col] = fontstyle.apply(str(r[pos[0]][pos[1]]),'WHITE/BLACK_BG')
-    fontstyle.preserve(r[row][col])
+    if r[row][col] == "X":
+        r[row][col] = "."
 
-def right():
+def right(): # moves the cursor to the right
     clean(pos[0],pos[1])
     if pos[1] < 8:
         pos[1] += 1
     elif pos[1] == 8 and pos[0] < 8:
         pos[1] = 0
         pos[0] += 1
-    font = fontstyle.apply(str(r[pos[0]][pos[1]]),'BLACK/WHITE_BG')
-    r[pos[0]][pos[1]] = font
+    r[pos[0]][pos[1]] = "X"
     print(message,board())
 
-def left():
+def left(): # moves the cursor to the left
     clean(pos[0],pos[1])
     if pos[1] > 0:
         pos[1] -= 1
     elif pos[1] == 0 and pos[0] > 0:
         pos[1] = 8
         pos[0] -= 1
-    r[pos[0]][pos[1]] = fontstyle.apply(str(r[pos[0]][pos[1]]),'BLACK/WHITE_BG')
+    r[pos[0]][pos[1]] = "X"
     print(message,board())
 
-def up():
+def up(): # moves the cursor up
     clean(pos[0],pos[1])
     if pos[0] > 0:
         pos[0] -= 1
-    r[pos[0]][pos[1]] = fontstyle.apply(str(r[pos[0]][pos[1]]),'BLACK/WHITE_BG')
+    r[pos[0]][pos[1]] = "X"
     print(message,board())
 
-def down():
+def down(): # moves the cursor down
     clean(pos[0],pos[1])
     if pos[0] < 8:
         pos[0] += 1
-    r[pos[0]][pos[1]] = fontstyle.apply(str(r[pos[0]][pos[1]]),'BLACK/WHITE_BG')
+    r[pos[0]][pos[1]] = "X"
     print(message,board())
 
-def check(row, col, num):
-    for i in range(9):
+def check(row, col, num): # logic to check if the number is valid
+    for i in range(9): #checking the row
         if r[row][i] == num:
             return False
-    for i in range(9):
+    for i in range(9): #checking the column
         if r[i][col] == num:
             return False
-    startRow = row - row % 3
+    startRow = row - row % 3 #used to check the cells
     startCol = col - col % 3
-    for i in range(3):
+    for i in range(3): #checking the cells
         for j in range(3):
             if r[i + startRow][j + startCol] == num:
                 return False
-    return True
+    return True 
  
 def solve(row, col):
-    if (row == 8 and col == 9):
+    if (row == 8 and col == 9):# if the solving function gets to this point, the board is solved and function is aborted, rerturns True
         return True
-    if col == 9:
+    if col == 9: # goes to the next row
         row += 1
         col = 0
-    if r[row][col] != ".":
+    if r[row][col] != "." or r[row][col] == "X": # skips the cell if it is already filled
         return solve(row, col + 1)
-    for num in range(1, 10): 
-        if check(row, col, num):
+    for num in range(1, 10): # tries numbers 1-9
+        if check(row, col, num): # checks if the number is valid
             r[row][col] = num
-            if solve(row, col + 1):
+            if solve(row, col + 1): # recursively calls the function
                 return True
-        r[row][col] = "."
-    return False
+        r[row][col] = "." # if the number is not valid, it is reset
+    return False 
+
+def solution():
+    logic = True
+    for i in range(9): 
+       if "." in r[i]:
+            logic = False
+    return logic
 
 #main loop
+r[pos[0]][pos[0]] = "X" # sets the starting position
 print(message,board())
-def on_key_release(key):
-    if key == Key.right:
-        right()
+def on_key_release(key): # listens for key presses
+    global s
+    if key == Key.right: 
+        if s == False:
+            right()
     elif key == Key.left:
-        left()
+        if s == False:
+            left()
     elif key == Key.up:
-        up()
+        if s == False:
+            up()
     elif key == Key.down:
-        down()
+        if s == False:
+            down()
     elif key == Key.esc:
         print("Exiting...")
         sleep(1)
         exit()
-    elif key == Key.space:
-        print(r)
     elif key == Key.enter:
         print("Solving...")
+        print(str(solve(0,0)))
+        for i in range(9): # removes the cursor from the board
+            for j in range(9):
+                if r[i][j] == "X":
+                    r[i][j] = "."
         solve(0,0)
-        os.system('cls')
-        print(board())
-    elif key.char in n:
-        num = int(key.char)
-        r[pos[0]][pos[1]] = num
-        right()
-        #return
-    else:
-        print("Invalid input1")
-        return
+        if solution() == True:
+            s = True
+            os.system('cls')
+            print("Solved!",board())
+        else:
+            s = True
+            os.system('cls')
+            print("No solution found.",board())
+    else: # checks if the input is a number and if it is, it is entered into the board
+        try: # using try except to catch invalid inputs (if key is pressed that is not number/letter it would crash the program otherwise)
+            if key.char in n:
+                num = int(key.char)
+                r[pos[0]][pos[1]] = num
+                right()
+        except:
+            print("Invalid input.")
     
-with keyboard.Listener(on_release=on_key_release) as listener:
-    listener.join()
+try: # used to catch errors
+    with keyboard.Listener(on_release=on_key_release) as listener:
+        listener.join()
+except:
+    print("An error occured.")
+    sleep(5)
+    exit()
