@@ -53,7 +53,7 @@ def board():
 def clean(row,col):
     os.system('cls')
     #r[row][col] = fontstyle.apply(str(r[pos[0]][pos[1]]),'WHITE/BLACK_BG')
-    fontstyle.preserve(r[pos[0]][pos[1]])
+    fontstyle.preserve(r[row][col])
 
 def right():
     clean(pos[0],pos[1])
@@ -90,17 +90,12 @@ def down():
     r[pos[0]][pos[1]] = fontstyle.apply(str(r[pos[0]][pos[1]]),'BLACK/WHITE_BG')
     print(message,board())
 
-def solve():
-    return
-
-
-
-def solve(row, col, num):
-    for x in range(9):
-        if r[row][x] == num:
+def check(row, col, num):
+    for i in range(9):
+        if r[row][i] == num:
             return False
-    for x in range(9):
-        if r[x][col] == num:
+    for i in range(9):
+        if r[i][col] == num:
             return False
     startRow = row - row % 3
     startCol = col - col % 3
@@ -110,25 +105,21 @@ def solve(row, col, num):
                 return False
     return True
  
-def Suduko(row, col):
+def solve(row, col):
     if (row == 8 and col == 9):
         return True
     if col == 9:
         row += 1
         col = 0
     if r[row][col] != ".":
-        return Suduko(row, col + 1)
+        return solve(row, col + 1)
     for num in range(1, 10): 
-        if solve(row, col, num):
+        if check(row, col, num):
             r[row][col] = num
-            if Suduko(row, col + 1):
+            if solve(row, col + 1):
                 return True
         r[row][col] = "."
     return False
-
-
-
-
 
 #main loop
 print(message,board())
@@ -149,8 +140,9 @@ def on_key_release(key):
         print(r)
     elif key == Key.enter:
         print("Solving...")
-        Suduko(0,0)
-        #solve()
+        solve(0,0)
+        os.system('cls')
+        print(board())
     elif key.char in n:
         num = int(key.char)
         r[pos[0]][pos[1]] = num
