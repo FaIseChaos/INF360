@@ -70,14 +70,14 @@ def move_down(): # moves the cursor down
     boardData[pos[0]][pos[1]] = "X"
     print(message,create_board())
 
-def input_number(num):
+def input_number(num): # puts a number on the board
     if num > 0:
         boardData[pos[0]][pos[1]] = num
         move_right()
 
-def enter_pressed():
+def enter_pressed(): # removes the cursor from the board, solves puzzle, prints the solution if exists
     print("Solving...")
-    for i in range(9): # removes the cursor from the board
+    for i in range(9): 
         for j in range(9):
             if boardData[i][j] == "X":
                 boardData[i][j] = "."
@@ -103,7 +103,7 @@ def check_if_valid(row, col, num): # logic to check if the number is valid
                 return False
     return True 
  
-def solve_puzzle(row, col):
+def solve_puzzle(row, col): # recursive function to solve the puzzle
     startTime = datetime.now()
     if (row == 8 and col == 9):# if the solving function gets to this point, the board is solved and function is aborted, rerturns True
         return True
@@ -123,7 +123,7 @@ def solve_puzzle(row, col):
             break
     return False 
 
-def check_solution():
+def check_solution(): # checks if the board is solved
     logic = True
     for i in range(9): 
        if "." in boardData[i]:
